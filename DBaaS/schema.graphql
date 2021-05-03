@@ -1,0 +1,15 @@
+type Item {
+ name: String
+}
+
+type ProductMarket{
+  description: String
+}
+
+
+type Query {
+ allItems: [Item!]
+ allProductMarkets: [ProductMarket!]
+}
+
+

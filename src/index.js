@@ -20,6 +20,8 @@ import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 
+
+
 // core components
 import Admin from "layouts/Admin.js";
 import RTL from "layouts/RTL.js";
@@ -34,11 +36,7 @@ Aggiunta configurazione apollo client
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
 
-/*const client = new ApolloClient({
-  uri: 'http://localhost:4000/',
-  cache: new InMemoryCache()
-});
-*/
+
 const client = new ApolloClient({
   uri: "https://graphql.fauna.com/graphql",
   headers: {
@@ -59,6 +57,7 @@ ReactDOM.render(
  * A.Duranti - 28/12/2020
  * Aggiunta configurazione apollo client
  */
+
 <ApolloProvider client={client}>
   <Router history={hist}>
     <Switch>
@@ -67,6 +66,7 @@ ReactDOM.render(
       <Redirect from="/" to="/admin/dashboard" />
     </Switch>
   </Router>
-  </ApolloProvider>,
+  </ApolloProvider>
+,
   document.getElementById("root")
 );

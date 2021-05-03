@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components
@@ -6,51 +6,22 @@ import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import Table from "components/Table/Table.js";
 import Card from "components/Card/Card.js";
-import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+import Button from "components/CustomButtons/Button";
+import CardHeader from "components/Card/CardHeader.js";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Checkbox from '@material-ui/core/Checkbox';
-import Switch from '@material-ui/core/Switch';
-import Grid from '@material-ui/core/Grid';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import { DropzoneAreaBase } from 'material-ui-dropzone';
-import Icon from '@material-ui/core/Icon';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import Paper from '@material-ui/core/Paper';
 import Draggable from 'react-draggable';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import { useQuery, gql } from '@apollo/client';
-import { onError } from "@apollo/client/link/error";
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
 
-
-/* settoreMerc = [
-  { descrizione: 'Prodotti Informatici', year: 1994 },
-  { descrizione: 'Forniture Varie', year: 1972 },
-  { descrizione: 'Servizi', year: 1974 },
-  { descrizione: 'Mobili ed Arredi', year: 2008 },
-  { descrizione: 'Attrezzature', year: 1957 },
- 
-];
-*/
 const PRODUCTS_MARKET_QUERY = gql`
  {
   allProductMarkets {
@@ -61,7 +32,6 @@ const PRODUCTS_MARKET_QUERY = gql`
    }
  }
 `;
-
 
 
 function ProductsMarket() {
@@ -78,11 +48,6 @@ function ProductsMarket() {
 
   if (networkError) console.log(`[Network error]: ${networkError}`);
   return (
-    // <ul>
-    //   {data.allItems.data.map((item) => {
-    //     return <li key={item._id}>{item.name}</li>;
-    //   })}
-    // </ul>
     <Autocomplete
                     id="combo-box-demo"
                     options={data.allProductMarkets.data}
@@ -149,89 +114,89 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const useStyles = makeStyles(styles);
 
+
+
+
 export default function TableList() {
   const classes = useStyles();
-  const [state, setState] = React.useState({
-    checkedA: true,
-    checkedB: true,
-  });
   
-  const handleChange = (event) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
-  };
   
-  const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const [descrizione, setDescrizione] = React.useState('');
+  const [importo, setImporto] = React.useState('');
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  
 
-
-  const [openSnack, setOpenSnack] = React.useState(false);
-
-
-  const handleClick = () => {
-    handleClose();
-    setOpenSnack(true);
-  };
-
-  const handleCloseSnack = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+  const handleChange = e => {
+    if (e.target.id === 'descrizione') {
+      setDescrizione(e.target.value);
+    } else if (e.target.id === 'importo') {
+      setImporto(e.target.value);
     }
-
-    setOpenSnack(false);
+    
   };
-
-
+   
+  
+  const handleSubmit = (event) => {
+    console.log("insert!");
+    
+  }
+  
 
 
   return (
+
+
+    
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
         <Card>
-          <AppBar position="static" style={{backgroundColor:"darkviolet"}}>
-            <Toolbar >
-              <GridContainer style={{width:"100%"}}>
-                <GridItem xs={10}>
-                  {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                    <MenuIcon />
-                  </IconButton> */}
-                  <h4 className={classes.cardTitleWhite}>Progetto</h4>
-                  {/* <ExchangeRates /> */}
-                </GridItem>
-                <GridItem xs={2} style={{textAlign:"right"}} >
-                  <Button  color="inherit" href="/admin/progetti">Aggiungi</Button>
-                </GridItem>
-              </GridContainer>
-            </Toolbar>
-          </AppBar>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Progetto</h4>
+          </CardHeader>
           <CardBody>
+            <ValidatorForm
+                onSubmit={handleSubmit}
+                onError={errors => console.log(errors)}>
             <GridContainer style={{width:"100%"}}>
               <GridItem xs={12} >&nbsp;</GridItem>
               <GridItem xs={4} >
-                <TextField required id="descrizione" label="Descrizione" defaultValue="" fullWidth/>
+              <TextValidator
+                id="descrizione"
+                label="Descrizione"
+                onChange={handleChange}
+                value={descrizione}
+                validators={['required']}
+                fullWidth
+                helperText="Inserisci la descrizione"
+                errorMessages={['Campo Obbligatorio']}
+              />
+                
               </GridItem>
               <GridItem xs={1} >&nbsp;</GridItem>
               <GridItem xs={2} >
-                <TextField required id="importo" label="Importo[€]" defaultValue="" fullWidth />  
+              <TextValidator
+                id="importo"
+                label="Importo"
+                type="number"
+                onChange={handleChange}
+                value={importo}
+                validators={['required']}
+                fullWidth
+                helperText="Inserisci l'importo"
+                errorMessages={['Campo Obbligatorio']}
+              />
               </GridItem>
               <GridItem xs={1} >&nbsp;</GridItem>
               <GridItem xs={3} >
-                <TextField
-                    id="date"
-                    label="Data fine"
-                    type="date"
-                    defaultValue="2017-05-"
-                    className={classes.textField}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
+              <TextValidator
+                id="dataFineProgetto"
+                label="Data Fine Progetto"
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
               </GridItem>
               <GridItem xs={12} >&nbsp;</GridItem>
               <GridItem xs={12} >&nbsp;</GridItem>
@@ -245,8 +210,11 @@ export default function TableList() {
                     onDelete={(fileObj) => console.log('Removed File:', fileObj)}
                     onAlert={(message, variant) => console.log(`${variant}: ${message}`)}
                   />
-              </GridItem>  
+              </GridItem> 
+              <GridItem xs={12} >&nbsp;</GridItem>
+              <GridItem xs={12} ><Button color="primary" type="submit" >Inserisci Progetto</Button></GridItem>
             </GridContainer>
+            </ValidatorForm>
             <Table
               tableHeaderColor="primary"
               tableHead={["Descrizione", "Importo[€]", "Data Fine", "Settore Merceologico"]}
@@ -258,34 +226,6 @@ export default function TableList() {
                 [<Link href="/admin/dettaglioCliente" color="secondary">Progetto Investimento</Link>, "45000", "31/09/2021","Forniture Varie"],
               ]}
             />
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              PaperComponent={PaperComponent}
-              aria-labelledby="draggable-dialog-title"
-            >
-              <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                Avviso
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Attenzione , stai per inviare un'opportunità al cliente , vuoi continuare?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button autoFocus onClick={handleClose} color="primary">
-                  No
-                </Button>
-                <Button onClick={handleClose,handleClick} color="primary">
-                  Sì
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <Snackbar open={openSnack} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical:"bottom", horizontal:"left" }}>
-              <Alert onClose={handleCloseSnack} severity="success">
-                Invio avvenuto con successo!
-              </Alert>
-            </Snackbar>
           </CardBody>
         </Card>
       </GridItem>
@@ -293,3 +233,4 @@ export default function TableList() {
     
   );
 }
+//}
